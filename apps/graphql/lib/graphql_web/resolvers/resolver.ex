@@ -1,9 +1,4 @@
 defmodule Graphql.Resolver do
-  def addresses(args, _info) do
-    # Check out the DB module to see the functions you can use
-    # to interact with the database.
-  end
-
   def smoke_test(_args, _info) do
     {:ok, "Yes!"}
   end

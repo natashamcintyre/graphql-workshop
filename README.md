@@ -1,42 +1,138 @@
-# ExAmple
+# GraphQL Workshop
 
-### The Answers
+Disclaimer: this is an almost identical copy of Adzz's [ex_ample repo](https://github.com/Adzz/ex_ample), but has been specially adapted to be shorter and accessible to those new to elixir and GraphQL.
 
-1. To complete the mission, we [read some docs](https://hexdocs.pm/phoenix/up_and_running.html) and did this:
+The idea is to step through the branches completing the exercises outlined in the readme as you go. Answers can be found at the top of each branch's README for the preceeding section.
+
+```
+master
+my-first-query
+my-second-query
+my-first-mutation
+my-first-resolving-function
+```
+
+## Background information
+
+**Note, these are NOT instructions - you don't need to do anything outlined in this section, but please read to understand the structure of the repo**
+
+### Umbrella projects
+
+This repo is an 'umbrella' project. [Umbrella projects](https://8thlight.com/blog/georgina-mcfadyen/2017/05/01/elixir-umbrella-projects.html) are a great way to manage internal dependencies for your applications. Internal dependencies can be thought of as libraries that can sit on their own - but that you don't want to or cannot open source. They are things that you can configure their own releases for (so can be released independently from the rest of the application), but are conveniently grouped together into one git repo.
+
+<details>
+<summary>When is an umbrella project a good idea?</summary>
+<br/>
+If you have ever had one repo rely on another, you'll soon find umbrella projects to be lifesavers; no more using git tags and bumping versions in your mix files so you can get new features!
+
+However, apps within an umbrella projects are not _completely_ decoupled. From [the docs](https://elixir-lang.org/getting-started/mix-otp/dependencies-and-umbrella-projects.html#dont-drink-the-kool-aid)
+
+> While it provides a degree of separation between applications, those applications are not fully decoupled, as they are assumed to share the same configuration and the same dependencies.
+
+And
+
+> If you find yourself in a position where you want to use different configurations in each application for the same dependency or use different dependency versions, then it is likely your codebase has grown beyond what umbrellas can provide.
+
+</details>
+
+### Getting Started - creating an umbrella project
+
+So far to create this repo, we first ran this command:
 
 ```sh
-cd apps
-mix phx.new graphql --no-ecto --no-html
+mix new ex_ample --umbrella
 ```
 
-2. Then we needed to add the deps so that our `deps` function in the `mix.exs` file looks like this:
+The name of the app is `ex_ample`, and the umbrella flag does exactly what you think it does.
+
+### Adding to the umbrella
+
+We added new individual apps to the umbrella project by running a command like this (from the root of the project):
+
+```sh
+cd apps && mix new app_name --sup
+```
+
+The `sup` flag stands for supervision, it just tells Mix to generate a [supervision tree](https://stackoverflow.com/questions/46554449/erlang-elixir-what-is-a-supervision-tree) automatically for us, instead of having to build one manually. More in [the docs 👩‍⚕️](https://elixir-lang.org/getting-started/mix-otp/dependencies-and-umbrella-projects.html)
+
+We have added an app called `ex_ample_backend`. This will act as the datasource for our application. It has VERY limited capabilities. I don't recommend that you read the code unless you have a penchant for punishment. I certainly don't recomend you use it past this exercise.
+
+### Adding a phoenix app
+
+We have created a phoenix (web server) app called **graphql** using a command similar to this one:
+
+```sh
+cd apps && mix phx.new name_of_app --no-ecto --no-html
+```
+
+`--no-ecto` and `--no-html` flags are optional. The `--no-ecto` flag means Ecto files are not generated and the `--no-html` means no HTML views are generated (Ecto is a database wrapper for Elixir and as this example has no database, we don't need it.)
+
+<details>
+<summary>Wait, what is Phoenix?</summary>
+<br/>
+Phoenix is a web development framework written in Elixir which implements the server-side Model View Controller (MVC) pattern. Check out the docs here: https://hexdocs.pm/phoenix/overview.html#content. Phoenix is the top layer of a multi-layer system designed to be modular and flexible. The other layers include Cowboy, Plug and Ecto.
+</details>
+
+### Adding dependencies
+
+We wanted to add 2 dependencies to this project:
+
+- [Absinthe](https://github.com/absinthe-graphql/absinthe)
+- [Absinthe Plug](https://github.com/absinthe-graphql/absinthe_plug)
+
+<details>
+<summary>What is Absinthe? Why are we adding it?</summary>
+<br/>
+Absinthe is the GraphQL toolkit for Elixir, built to suit Elixir's capabilities and style. With Absinthe, you define the schema and resolution functions and it executes GraphQL documents.
+
+On client side Absinthe has support for Relay and Apollo client and in Elixir it uses Plug and Phoenix to support HTTP APIs, via `absinthe_plug` and `absinthe_phoenix` packages. It also has support for Ecto via the `absinthe_ecto package`.
+
+</details>
+
+Adding dependencies in elixir doesn't work like it does in javacript (`npm install jest` etc) - there are no magic words to install! We have added 2 dependencies manually in the `mix.exs` file inside the `graphql` app:
 
 ```elixir
-  defp deps do
-    [
-      {:phoenix, "~> 1.4.0"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
-      # these are the deps we added:
-      {:absinthe, "~> 1.4.0"},
-      {:absinthe_plug, "~> 1.4.0"},
-    ]
-  end
+{:absinthe, "~> 1.4.0"},
+{:absinthe_plug, "~> 1.4.0"},
 ```
 
-3 and 4s. The router file `apps/graphql/lib/graphql_web/router.ex` should now look like this:
+So the dependency section now looks like this:
+
+```elixir
+...
+  # Specifies your project dependencies.
+  #
+  # Type `mix help deps` for examples and options.
+  defp deps do
+    [
+      {:phoenix, "~> 1.3.3"},
+      {:phoenix_pubsub, "~> 1.0"},
+      {:gettext, "~> 0.11"},
+      {:cowboy, "~> 1.0"},
+      {:absinthe, "~> 1.4.0"},
+      {:absinthe_plug, "~> 1.4.0"},
+      {:jason, "~> 1.1"},
+      {:ex_ample_backend, in_umbrella: true},
+      {:cors_plug, "~> 1.5"}
+    ]
+  end
+end
+
+```
+
+### Adding web server routes
+
+Inside our `router.ex` file in the graphql app, we've added 2 new routes. One is the route that Absinthe and Graphql use to host our GraphQL api (`/graphql`), the other is the route that the Graphiql tool uses (`/graphiql`), which is only available in development.
 
 ```elixir
   scope "/graphql" do
-    forward(
-      "/",
-      Absinthe.Plug,
-      schema: Graphql.Schema,
-      json_codec: Jason
-    )
-  end
+      forward(
+        "/",
+        Absinthe.Plug,
+        schema: Graphql.Schema,
+        json_codec: Jason
+      )
+    end
 
   if Mix.env() == :dev do
     forward(
@@ -50,10 +146,17 @@ mix phx.new graphql --no-ecto --no-html
   end
 ```
 
-And finally for 5 we added a schema file here `apps/graphql/lib/graphql_web/schema.ex` that looks like this (don't worry that you didn't add the mutation, have a look at how it compares):
+You don't need to worry too much about the syntax here, or remember it, its just for information!
+
+### Adding a schema file and some smoke tests
+
+We have added a `schema.ex` file and add a resolvers folder with a `resolver.ex` file in it.
+
+Inside `schema.ex` we have defined the schema module, imported Absinthe, and written two 'hello world' smoke tests so we can check our api and resolvers are all working.
 
 ```elixir
 defmodule Graphql.Schema do
+  # This allows us to use the absinthe schema notation like 'query' and 'field'
   use Absinthe.Schema
 
   query do
@@ -71,12 +174,12 @@ defmodule Graphql.Schema do
 end
 ```
 
-We then added a resolver file here: `apps/graphql/lib/graphql_web/resolvers/resolver.ex` which looked like this:
+Inside `resolvers.ex` we added the two resolver functions from the schema.
 
 ```elixir
 defmodule Graphql.Resolver do
   def smoke_test(_args, _info) do
-    {:ok, "Hello world!"}
+    {:ok, "Yes!"}
   end
 
   def test_update(%{input: input}, _info) do
@@ -85,18 +188,44 @@ defmodule Graphql.Resolver do
 end
 ```
 
-This resolver pattern is great groundwork for the architecture of the application as it grows, even if it is overkill right now.
+Try and understand what's happening in these two files, as you will be using the same syntax and concepts to write your own queries shortly! Speak to your partner or a workshop leader if you have questions.
 
-## My first query
+Side point: note how the Absinthe `resolve` function (in the schema) expects resolver functions to return an "ok tuple" (or an "error tuple" in the case of an error), which is a tuple containing an ok or error atom and some data. This is a common way in elixir to handle error catching and propagation.
 
-Now that we have successfully wired up our new app, we need to be able to query for some data.
+```elixir
+# ok tuple (response is a variable that would contain some data)
+{:ok, reponse}
 
-Our next challenge will be to implement a new query which will get some data from our database, and expose it in our API. Along the way we will learn how Absinthe looks at things, and what we can do about it.
+# error tuple
+{:error, response}
+```
 
-We will implement a query for all of the addresses we have in our DB, we will know we have successfully implemented the feature when all the tests are green.
+## Workshop Instructions
 
-To get started head to the tests in `apps/graphql/test/integration/my_first_query_test.exs` run them with `mix test` to see them fail. Then head to `apps/graphql/lib/graphql_web/schema.ex` for hints on how to get going.
+1. Clone this repo:
 
-When it passes try booting the server with `mix phx.server` then head to `localhost:4000/graphiql` and try running the query using graphiql.
+```sh
+git clone https://github.com/developess/GraphQL-Workshop
+```
 
-When you're done, checkout `my-second-query` for more querying fun!
+2. Install Phoenix web framework if you don't have it already. You can find instructions [here](https://hexdocs.pm/phoenix/installation.html):
+
+3. Fetch the dependencies for the repo by running:
+   `mix deps.get`
+
+4. Get your Phoenix server running:
+   `mix phx.server`
+
+If you go to `localhost:4000/graphiql` you should be able to see the Graphiql interface with the smoke tests above in the docs panel! Try writing a query or mutation that calls the smoke tests (Use the docs or the hint below).
+
+<details>
+<summary>Hint</summary>
+<br/>
+```graphql
+query smokeTest {
+  isThisThingOn
+}
+```
+</details>
+
+Then, checkout the next branch: `my-first-query` for your first challenge.
