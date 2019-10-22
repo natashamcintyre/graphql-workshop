@@ -188,7 +188,9 @@ defmodule Graphql.Resolver do
 end
 ```
 
-As you can see Absinthe `resolve` function (in the schema) expects resolver functions to return an "ok tuple" (or an "error tuple" in the case of an error), which is a tuple containing an ok or error atom and some data:
+Try and understand what's happening in these two files, as you will be using the same syntax and concepts to write your own queries shortly! Speak to your partner or a workshop leader if you have questions.
+
+Side point: note how the Absinthe `resolve` function (in the schema) expects resolver functions to return an "ok tuple" (or an "error tuple" in the case of an error), which is a tuple containing an ok or error atom and some data. This is a common way in elixir to handle error catching and propogation.
 
 ```elixir
 # ok tuple (response is a variable that would contain some data)
@@ -214,7 +216,7 @@ git clone https://github.com/developess/GraphQL-Workshop
 4. Get your Phoenix server running:
    `mix phx.server`
 
-If you go to `localhost:4000/graphiql` you should be able to see the Graphiql interface with the smoke tests above in the docs! Try writing a query or mutation that calls the smoke tests (Use the docs or the hint below).
+If you go to `localhost:4000/graphiql` you should be able to see the Graphiql interface with the smoke tests above in the docs panel! Try writing a query or mutation that calls the smoke tests (Use the docs or the hint below).
 
 <details>
 <summary>Hint</summary>
