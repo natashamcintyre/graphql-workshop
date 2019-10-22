@@ -2,7 +2,13 @@ defmodule Graphql.Schema do
   use Absinthe.Schema
 
   object :address do
-    # which subfields do we need?
+    field(:id, non_null(:id))
+    field(:postcode, :string)
+    field(:house_number, :integer)
+  end
+
+  object :land_reg_data do
+    # add the sub fields here!
   end
 
   query do
@@ -11,8 +17,11 @@ defmodule Graphql.Schema do
     end
 
     field :get_addresses, type: list_of(:address) do
-      # We need to add a resolving function here!
+      resolve(&Graphql.Resolver.addresses/2)
     end
+
+    # implement your new query here, this time our field will need an arg... check out the
+    # mutation for a clue
   end
 
   mutation do
