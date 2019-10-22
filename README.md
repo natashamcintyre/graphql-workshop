@@ -174,7 +174,7 @@ defmodule Graphql.Schema do
 end
 ```
 
-Inside `reslovers.ex` we added the two resolver functions from the schema.
+Inside `resolvers.ex` we added the two resolver functions from the schema.
 
 ```elixir
 defmodule Graphql.Resolver do
@@ -190,7 +190,7 @@ end
 
 Try and understand what's happening in these two files, as you will be using the same syntax and concepts to write your own queries shortly! Speak to your partner or a workshop leader if you have questions.
 
-Side point: note how the Absinthe `resolve` function (in the schema) expects resolver functions to return an "ok tuple" (or an "error tuple" in the case of an error), which is a tuple containing an ok or error atom and some data. This is a common way in elixir to handle error catching and propogation.
+Side point: note how the Absinthe `resolve` function (in the schema) expects resolver functions to return an "ok tuple" (or an "error tuple" in the case of an error), which is a tuple containing an ok or error atom and some data. This is a common way in elixir to handle error catching and propagation.
 
 ```elixir
 # ok tuple (response is a variable that would contain some data)
