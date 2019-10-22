@@ -216,18 +216,6 @@ git clone https://github.com/developess/GraphQL-Workshop
 4. Get your Phoenix server running:
    `mix phx.server`
 
-If you go to `localhost:4000/graphiql` you should be able to see the Graphiql interface with the smoke tests above in the docs panel! Try writing a query or mutation that calls the smoke tests (Use the docs or the hint below).
-
-<details>
-<summary>Hint</summary>
-<br/>
-✨
-```graphql
-query smokeTest {
-  isThisThingOn
-}
-```
-✨
-</details>
+If you go to `localhost:4000/graphiql` you should be able to see the Graphiql interface with the smoke tests above in the docs panel! Try writing a query or mutation that calls one of the smoke tests.
 
 Then, checkout the next branch: `my-first-query` for your first challenge.
