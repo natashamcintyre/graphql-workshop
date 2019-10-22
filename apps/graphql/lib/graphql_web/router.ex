@@ -3,7 +3,7 @@ defmodule GraphqlWeb.Router do
 
   get("/", Graphql.PageController, :index)
 
-  scope "/api" do
+  scope "/graphql" do
     forward(
       "/",
       Absinthe.Plug,
