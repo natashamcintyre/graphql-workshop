@@ -1,41 +1,49 @@
 # ExAmple
 
-## My second Query - Answers
+## My first Mutation - Answers
 
 #### schema.ex
 
-Our land reg data type should be defined as follows:
+Here we go again. We made an input object like so:
 
 ```elixir
-  object :land_reg_data do
-    field(:address_id, :id)
-    field(:average_time_to_sold, :integer)
+  input_object :address_input do
+    field(:postcode, :string)
+    field(:house_number, :integer)
   end
 ```
 
-We implemented the resolver like this, inside the query:
+And we added a field into the mutation:
 
 ```elixir
-    field :land_reg_data, type: list_of(:land_reg_data) do
-      arg(:address_id, non_null(:id))
-      resolve(&Graphql.Resolver.land_reg_data/2)
+    field :create_address, type: :address do
+      arg(:input, :address_input)
+      resolve(&Graphql.Resolver.create_address/2)
     end
 ```
 
-#### resolver.ex
-
-Using the handy built in functions, we fetch the data like so:
+Finally we used the `create` helper to add to the database. Notice the pattern matching in the arguments to make this nice and tidy.
 
 ```elixir
-  def land_reg_data(args, _info) do
-    DB.get(LandRegData, address_id: args.address_id)
+  def create_address(%{input: input}, _info) do
+    DB.create(Address, postcode: input.postcode, house_number: input.house_number)
   end
 ```
 
-## My first Mutation
+## My first resolving function
 
-Superb work! We can now query the land reg for data. But what if someone has a house that we haven't heard of yet? We want people to be able to create an address, then query the land reg for that address. For that we need a mutation.
+Okay, so technically it isn't your first resolving function. We have been using resolver functions when we wrote things in our schema like:
 
-You know how it goes, run the test, watch the one in `apps/graphql/test/integration/my_first_mutation_test.exs` fail, then, you know, make it pass!
+```elixir
+resolve(&Graphql.Resolver.addresses/2)
+```
 
-When you're done, checkout `my-first-resolving-function` for answers and the final stage of this workshop!
+The clue was in the name. However, this time we are going to take resolving functions one step futher - to the graphql types that we are returning.
+
+The scenario is this, we want to be able to return a formatted address for a given property. To do this, we need to get the postcode and house number from the address and return it formatted nicely in a string. We then want to expose that string as a field on the address type, called `formatted_address`
+
+We have written a test (`apps/graphql/test/integration/my_first_resolving_function_test.exs`), work your magic to bring green to the land.
+
+## Tests passing?
+
+You're done! 🙌🏼🥳 Congratulations on completing this workshop. You can find answers to the above and completed workshop at `my-first-complete-api`.
