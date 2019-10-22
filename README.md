@@ -1,41 +1,41 @@
 # ExAmple
 
-## My first query - Answers
+## My second Query - Answers
 
-To make our first query and pass the test, we had to update our `schema.ex`. We added to the object that describes the address data we were expecting back:
+#### schema.ex
+
+Our land reg data type should be defined as follows:
 
 ```elixir
-  object :address do
-    field(:id, non_null(:id))
-    field(:postcode, :string)
-    field(:house_number, :integer)
+  object :land_reg_data do
+    field(:address_id, :id)
+    field(:average_time_to_sold, :integer)
   end
 ```
 
-Then we added our resolver function to the `get_addresses` query field:
+We implemented the resolver like this, inside the query:
 
 ```elixir
-  field :get_addresses, type: list_of(:address) do
-    resolve(&Graphql.Resolver.addresses/2)
+    field :land_reg_data, type: list_of(:land_reg_data) do
+      arg(:address_id, non_null(:id))
+      resolve(&Graphql.Resolver.land_reg_data/2)
+    end
+```
+
+#### resolver.ex
+
+Using the handy built in functions, we fetch the data like so:
+
+```elixir
+  def land_reg_data(args, _info) do
+    DB.get(LandRegData, address_id: args.address_id)
   end
 ```
 
-To actually pull those addresses, we needed to write an implementation for the resolver:
+## My first Mutation
 
-```elixir
-  def addresses(_args, _info) do
-    DB.all(Address)
-  end
-```
+Superb work! We can now query the land reg for data. But what if someone has a house that we haven't heard of yet? We want people to be able to create an address, then query the land reg for that address. For that we need a mutation.
 
-## My second Query
+You know how it goes, run the test, watch the one in `apps/graphql/test/integration/my_first_mutation_test.exs` fail, then, you know, make it pass!
 
-Excellent! Now we have addresses, we can take the id of one of those addresses and implement a query that will allow us to find land reg data for it, specifically the average time to sold for a property.
-
-Again we have a failing test in `apps/graphql/test/integration/my_second_query_test.exs` and some hints on what to do in `schema.ex`.
-
-This time our query will need some args...
-
-When it passes try booting the server with `mix phx.server` then head to `localhost:4000/graphiql` and try running the query using graphiql.
-
-When you're done, move on to `my-first-mutation`
+When you're done, checkout `my-first-resolving-function` for answers and the final stage of this workshop!
