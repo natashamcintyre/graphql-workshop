@@ -1,4 +1,4 @@
-defmodule LandRegData do
+defmodule Address do
   @moduledoc """
   Kids.
 
@@ -10,14 +10,12 @@ defmodule LandRegData do
   """
   use GenServer
 
-  @data_path Path.expand(Application.fetch_env!(:ex_ample_backend, :land_reg_source_path))
+  @data_path Path.expand(Application.fetch_env!(:ex_ample_backend, :address_source_path))
   # could parse this from CSV headers?
   @columns %{
     id: :string,
-    sale_price: :number,
-    address_id: :string,
-    date_sold: :date,
-    average_time_to_sold: :number
+    postcode: :string,
+    house_number: :number
   }
   @column_set MapSet.new(Map.keys(@columns))
   # this should be defined into a behaviour for all data sources
