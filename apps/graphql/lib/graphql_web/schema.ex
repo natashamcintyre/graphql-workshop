@@ -8,7 +8,9 @@ defmodule Graphql.Schema do
   end
 
   object :land_reg_data do
-    # add the sub fields here!
+    field(:id, non_null(:id))
+    field(:address_id, non_null(:id))
+    field(:average_time_to_sold, :integer)
   end
 
   query do
@@ -20,6 +22,10 @@ defmodule Graphql.Schema do
       resolve(&Graphql.Resolver.addresses/2)
     end
 
+    field :land_reg_data, type: list_of(:land_reg_data) do
+      arg(:address_id, :id)
+      resolve(&Graphql.Resolver.average_time_to_sold/2)
+    end
     # implement your new query here, this time our field will need an arg... check out the
     # mutation for a clue
   end

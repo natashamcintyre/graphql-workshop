@@ -4,6 +4,9 @@ defmodule Graphql.Resolver do
   end
 
   # what new function shall we put here?
+  def average_time_to_sold(input, _info) do
+    DB.get(LandRegData, input)
+  end
 
   def smoke_test(_args, _info) do
     {:ok, "Yes!"}
