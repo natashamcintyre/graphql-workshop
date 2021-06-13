@@ -2,7 +2,9 @@ defmodule Graphql.Schema do
   use Absinthe.Schema
 
   object :address do
-    # which subfields do we need?
+    field :id, :id
+    field :house_number, :integer
+    field :postcode, :string
   end
 
   query do
@@ -12,6 +14,7 @@ defmodule Graphql.Schema do
 
     field :get_addresses, type: list_of(:address) do
       # We need to add a resolving function here!
+      resolve(&Graphql.Resolver.addresses/2)
     end
   end
 
