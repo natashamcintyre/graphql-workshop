@@ -1,3 +1,7 @@
+# My learnings
+Need to add non_null(:id) to object field (for obv reasons!)
+Resolvers have different numbers of arguments :thinkingface:
+
 # ExAmple
 
 Could you get the smoke tests to work? If not, try pasting the query or mutation below into the left hand panel on the interface, and press the play button :)
