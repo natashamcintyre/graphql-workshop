@@ -7,7 +7,8 @@ defmodule Graphql.Resolver do
     DB.get(LandRegData, address_id: args.address_id)
   end
 
-  def create_address(args, _info) do
+  def create_address(%{input: input}, _info) do
+    DB.create(Address, [postcode: input.postcode, house_number: input.house_number] )
     # Ensure we persist it!
   end
 

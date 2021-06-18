@@ -15,6 +15,8 @@ defmodule Graphql.Schema do
 
   input_object :address_input do
     # fields for dayz
+    field(:postcode, :string)
+    field(:house_number, :integer)
   end
 
   query do
@@ -33,6 +35,10 @@ defmodule Graphql.Schema do
   end
 
   mutation do
+    field :create_address, type: :address do
+      arg(:input, :address_input)
+      resolve(&Graphql.Resolver.create_address/2)
+    end
     # stuff goes here.. but which stuff?
 
     field :echo_text, type: :string do
